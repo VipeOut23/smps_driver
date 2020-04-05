@@ -1,0 +1,3 @@
+[submodule "software_uart"]
+	path = software_uart
+	url = ./software_uart
