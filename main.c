@@ -13,13 +13,13 @@
 #define F_PWM_TGT 500000 // Not accurate, search for nearest clock divisor
 
 /* Determine PWM clock divisor based on F_PWM_TGT and F_CPU */
-#if F_CPU < F_PWM_TGT
+#if F_CPU < F_PWM_TGT/0xFF
 #define PWM_CK_DIV_BITS _BV(CS00)
-#elif F_CPU/8 < F_PWM_TGT
+#elif F_CPU/8 < F_PWM_TGT/0xFF
 #define PWM_CK_DIV_BITS _BV(CS01)
-#elif F_CPU/64 < F_PWM_TGT
+#elif F_CPU/64 < F_PWM_TGT/0xFF
 #define PWM_CK_DIV_BITS _BV(CS01) | _BV(CS00)
-#elif F_CPU/256 < F_PWM_TGT
+#elif F_CPU/256 < F_PWM_TGT/0xFF
 #define PWM_CK_DIV_BITS _BV(CS02)
 #else
 #define PWM_CK_DIV_BITS _BV(CS02) | _BV(CS00)
