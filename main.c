@@ -83,7 +83,5 @@ int main()
                 gain = (uint32_t) (100*adc_res)/0xFF;
                 str_len = sprintf(str, "%04u (%04u%%)\r\n", OCR0A, gain);
                 uart_try_puts(str, str_len);
-
-                _delay_us(10);
         }
 }
