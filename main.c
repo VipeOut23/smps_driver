@@ -10,7 +10,6 @@
 #define CLR(reg, pos) (reg &= ~(1<<(pos)))
 #define GET(reg, pos) (reg &  1<<(pos))
 
-#define VREF 2560
 #define F_PWM_TGT 500000 // Not accurate, search for nearest clock divisor
 
 /* Determine PWM clock divisor based on F_PWM_TGT and F_CPU */
@@ -28,10 +27,9 @@
 
 static void adc_pot_init()
 {
-        /* Use 2.56V as ref voltage */
+        /* Read on PB3 and use Vcc as ref */
         ADCSRA = _BV(ADEN) | _BV(ADPS2) | _BV(ADPS0);
-        /* Read on PB3 and left align result */
-        ADMUX = _BV(REFS2) | _BV(ADLAR) | _BV(REFS1) | _BV(MUX1) | _BV(MUX0);
+        ADMUX = _BV(MUX1) | _BV(MUX0);
 }
 
 static void pwm_init()
@@ -45,8 +43,8 @@ static void pwm_init()
 
 int main()
 {
-        uint8_t adc_res;
-        uint16_t vx;
+        uint16_t adc_res;
+        uint8_t gain;
         size_t str_len;
         char str[16];
 
@@ -67,17 +65,23 @@ int main()
         uart_puts("[H",2);
 
         for(;;) {
-                /* Read potentiometer voltage */
+                /* Read potentiometer gain */
                 SET(ADCSRA, ADSC);
                 while(0 < GET(ADCSRA, ADSC));
-                adc_res = ADCH;
+                adc_res =  ADCL;
+                adc_res |= ADCH<<8;
+
+                /* compensate 1/2 voltage div at potentiometer
+                 * and cap maximum to 0xFF */
+                adc_res = (adc_res>>1);
+                if(adc_res > 0xFF) adc_res = 0xFF;
 
                 /* Set pwm duty cycle to match it */
                 OCR0B = OCR0A = adc_res;
 
                 /* Display info */
-                vx = ((uint32_t) adc_res*VREF)/256;
-                str_len = sprintf(str, "%04umV - %04u\r\n", vx, OCR0B);
+                gain = (uint32_t) (100*adc_res)/0xFF;
+                str_len = sprintf(str, "%04u (%04u%%)\r\n", OCR0A, gain);
                 uart_puts(str, str_len);
 
                 _delay_us(10);
