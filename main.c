@@ -65,7 +65,7 @@ int main()
         uart_puts("[H",2);
 
         for(;;) {
-                /* Read potentiometer gain */
+                /* Read potentiometer voltage */
                 SET(ADCSRA, ADSC);
                 while(0 < GET(ADCSRA, ADSC));
                 adc_res =  ADCL;
