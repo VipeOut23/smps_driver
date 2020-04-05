@@ -7,7 +7,7 @@ PORT ?= /dev/ttyACM0
 
 # Environment ##################################################################
 BUILD = build
-SOURCES = main.c uart.c
+SOURCES = main.c software_uart/uart.c
 OBJECTS = $(patsubst %.c,$(BUILD)/%.o,$(SOURCES))
 
 # Compiler & Tools #############################################################
@@ -41,12 +41,11 @@ $(BUILD)/rom.elf: $(OBJECTS)
 	$(Q)$(CC) $(LDFLAGS) $(CPPFLAGS) -o $@ $^
 
 $(BUILD)/%.o: %.c
-	$(Q)mkdir -p $(BUILD)
+	$(Q)mkdir -p $$(dirname $@)
 	@echo "CC   $@"
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $^
 
 clean:
-	@rm -f $(BUILD)/* rom.hex
-	@rmdir -p $(BUILD) || true
+	@rm -rf $(BUILD) rom.hex
 
 .PHONY: std flash clean
