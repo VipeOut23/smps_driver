@@ -10,7 +10,7 @@
 #define CLR(reg, pos) (reg &= ~(1<<(pos)))
 #define GET(reg, pos) (reg &  1<<(pos))
 
-#define F_PWM_TGT 500000 // Not accurate, search for nearest clock divisor
+#define F_PWM_TGT 16000 // Not accurate, search for nearest clock divisor
 
 /* Determine PWM clock divisor based on F_PWM_TGT and F_CPU */
 #if F_CPU < F_PWM_TGT*0xFF
