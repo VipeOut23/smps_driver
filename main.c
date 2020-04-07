@@ -10,7 +10,7 @@
 #define CLR(reg, pos) (reg &= ~(1<<(pos)))
 #define GET(reg, pos) (reg &  1<<(pos))
 
-#define F_PWM_TGT 16000 // Not accurate, search for nearest clock divisor
+#define F_PWM_TGT 32000 // Not accurate, search for nearest clock divisor
 
 /* Determine PWM clock divisor based on F_PWM_TGT and F_CPU */
 #if F_CPU < F_PWM_TGT*0xFF
@@ -53,10 +53,10 @@ int main()
         size_t str_len;
         char str[24];
 
-        /* Set CK div to 2 -> 4MHz CK */
+        /* Set CK div to 1 -> 8MHz CK */
         cli();
         CLKPR = _BV(CLKPCE);
-        CLKPR = _BV(CLKPS0);
+        CLKPR = 0;
         sei();
 
         adc_pot_init();
