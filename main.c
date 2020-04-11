@@ -3,7 +3,6 @@
 #include <util/delay.h>
 #include <stdio.h>
 
-#define UART_TX_BIT PB3
 #include "software_uart/uart.h"
 
 #define SET(reg, pos) (reg |= 1<<(pos))
