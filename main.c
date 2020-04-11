@@ -1,14 +1,21 @@
-#include "software_uart/uart.h"
-
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdio.h>
 
+#define UART_TX_BIT PB3
+#include "software_uart/uart.h"
+
 #define SET(reg, pos) (reg |= 1<<(pos))
 #define FLP(reg, pos) (reg ^= 1<<(pos))
 #define CLR(reg, pos) (reg &= ~(1<<(pos)))
 #define GET(reg, pos) (reg &  1<<(pos))
+
+
+#define V_OUT_MAX 40
+#define V_OUT_MIN 12
+#define PWM_D_MIN 0xFF*0.0
+#define PWM_D_MAX 0xFF*0.7
 
 #define F_PWM_TGT 32000 // Not accurate, search for nearest clock divisor
 
@@ -77,9 +84,10 @@ int main()
                 adc_res |= ADCH<<8;
 
                 /* compensate 1/2 voltage div at potentiometer
-                 * and cap maximum to 0xFF */
+                 * and keep in PWM_D bounds */
                 adc_res = (adc_res>>1);
-                if(adc_res > 0xFF) adc_res = 0xFF;
+                if(adc_res > PWM_D_MAX) adc_res = PWM_D_MAX;
+                if(adc_res < PWM_D_MIN) adc_res = PWM_D_MIN;
 
                 /* Set pwm duty cycle to match it */
                 OCR0B = OCR0A = adc_res;
