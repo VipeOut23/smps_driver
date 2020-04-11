@@ -14,8 +14,8 @@
 
 #define V_OUT_MAX 40
 #define V_OUT_MIN 12
-#define PWM_D_MIN 0xFF*0.0
-#define PWM_D_MAX 0xFF*0.7
+#define PWM_D_MIN (0xFF*0.0)
+#define PWM_D_MAX (0xFF*0.7)
 
 #define F_PWM_TGT 32000 // Not accurate, search for nearest clock divisor
 
