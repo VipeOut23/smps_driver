@@ -11,7 +11,7 @@
 
 
 /* HW params */
-#define VCC 5000         //mV
+#define VCC 5000         // mV
 #define V_OUT_MAX 40000  // mV
 #define V_OUT_MIN 3000   // mV
 #define PWM_D_MIN (0xFF*0.0)+1
