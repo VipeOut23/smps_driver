@@ -20,7 +20,7 @@ AVRDUDE ?= avrdude
 CPPFLAGS += $(shell echo | $(CC) -xc -E -v - 2>&1 | grep -E '^\s' | sed '1d;s/^\s/-I/' | tr '\n' ' ')
 
 # Extra Flags ##################################################################
-CPPFLAGS += -DUART_TX_BIT=PB4
+CPPFLAGS += -DUART_TX_BIT=PB2
 
 -include def.mk # local definitions
 

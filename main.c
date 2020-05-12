@@ -11,9 +11,10 @@
 
 
 /* HW params */
-#define V_OUT_MAX 40
-#define V_OUT_MIN 3
-#define PWM_D_MIN (0xFF*0.0)
+#define VCC 5000         // mV
+#define V_OUT_MAX 40000  // mV
+#define V_OUT_MIN 3000   // mV
+#define PWM_D_MIN (0xFF*0.0)+1
 #define PWM_D_MAX (0xFF*0.7)
 #define F_PWM_TGT 32000 // Not accurate, search for nearest clock divisor
 
@@ -35,11 +36,38 @@
 #define PWM_CK_DIV_BITS _BV(CS02) | _BV(CS00)
 #endif
 
-static void adc_pot_init()
+static uint16_t adc_pot_read()
 {
-        /* Read on PB3 and use Vcc as ref */
-        ADCSRA = _BV(ADEN) | _BV(ADPS2) | _BV(ADPS0);
+        uint16_t adc_res;
+
+        /* Read on PB3 */
         ADMUX = _BV(MUX1) | _BV(MUX0);
+        SET(ADCSRA, ADSC);
+        while(0 < GET(ADCSRA, ADSC));
+        adc_res =  ADCL;
+        adc_res |= ADCH<<8;
+
+        return adc_res;
+}
+
+static uint16_t adc_feedback_read()
+{
+        uint16_t adc_res;
+
+        /* Read on PB4 */
+        ADMUX = _BV(MUX1);
+        SET(ADCSRA, ADSC);
+        while(0 < GET(ADCSRA, ADSC));
+        adc_res =  ADCL;
+        adc_res |= ADCH<<8;
+
+        return adc_res;
+}
+
+static void adc_init()
+{
+        /* ADC CK = F_CPU/32 ; Vcc as ref*/
+        ADCSRA = _BV(ADEN) | _BV(ADPS2) | _BV(ADPS0);
 }
 
 static void pwm_init()
@@ -53,10 +81,12 @@ static void pwm_init()
 
 int main()
 {
-        uint16_t adc_res;
-        uint8_t vx;
+        uint16_t adc_res;  // ADC result
+        uint8_t pwm_d;     // Raw pwm duty cycle value
+        uint32_t v_tgt;    // Target Voltage in mV
+        uint32_t vx;       // messured feedback voltage
         size_t str_len;
-        char str[24];
+        char str[64];
 
         /* Set CK div to 1 -> 8MHz CK */
         cli();
@@ -64,7 +94,7 @@ int main()
         CLKPR = 0;
         sei();
 
-        adc_pot_init();
+        adc_init();
         pwm_init();
         uart_init();
 
@@ -74,25 +104,30 @@ int main()
         uart_putc(27);
         uart_puts("[H",2);
 
+        pwm_d = PWM_D_MIN;
+
         for(;;) {
-                /* Read potentiometer voltage */
-                SET(ADCSRA, ADSC);
-                while(0 < GET(ADCSRA, ADSC));
-                adc_res =  ADCL;
-                adc_res |= ADCH<<8;
+                /* Read potentiometer voltage and map it to an output voltage */
+                adc_res = adc_pot_read();
+                v_tgt = V_OUT_MIN + (adc_res*(((V_OUT_MAX - V_OUT_MIN))/1024));
 
-                /* compensate 1/2 voltage div at potentiometer
-                 * and keep in PWM_D bounds */
-                adc_res = (adc_res>>1);
-                if(adc_res > PWM_D_MAX) adc_res = PWM_D_MAX;
-                if(adc_res < PWM_D_MIN) adc_res = PWM_D_MIN;
+                /* Read feedback voltage (scaled down by 10)*/
+                adc_res = adc_feedback_read();
+                vx = adc_res*(((uint32_t)VCC*10)/1024);
 
-                /* Set pwm duty cycle to match it */
-                OCR0B = OCR0A = adc_res;
+                /* converge to target voltage */
+                if(vx < v_tgt) pwm_d++;
+                if(vx > v_tgt) pwm_d--;
+
+                /* Keep pwm value in bounds */
+                if(pwm_d > PWM_D_MAX) pwm_d = PWM_D_MAX;
+                if(pwm_d < PWM_D_MIN) pwm_d = PWM_D_MIN;
+
+                /* Set pwm duty cycle */
+                OCR0B = OCR0A = pwm_d;
 
                 /* Display info */
-                vx = (uint32_t) (100*adc_res)/0xFF;
-                str_len = sprintf(str, "%03d%% @ %ldHz\r\n", vx, F_PWM);
+                str_len = sprintf(str, "F %05lumV ; T %05lumV ; %03u%% @ %uHz\r\n", vx, v_tgt, 100*pwm_d/0xFF, F_PWM);
                 uart_try_puts(str, str_len);
         }
 }
