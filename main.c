@@ -83,7 +83,7 @@ int main()
 {
         uint16_t adc_res; // ADC result
         uint8_t pwm_d;    // Raw pwm duty cycle value
-        uint32_t v_tgt;  // Target Voltage in mV
+        uint16_t v_tgt;  // Target Voltage in mV
         uint16_t vx;      // messured feedback voltage
         size_t str_len;
         char str[64];
@@ -107,11 +107,11 @@ int main()
         for(;;) {
                 /* Read potentiometer voltage and map it to an output voltage */
                 adc_res = adc_pot_read();
-                v_tgt = V_OUT_MIN + (((V_OUT_MAX - V_OUT_MIN)*1024)/adc_res);
+                v_tgt = V_OUT_MIN + 1024*(((V_OUT_MAX - V_OUT_MIN))/adc_res);
 
                 /* Read feedback voltage */
                 adc_res = adc_feedback_read();
-                vx = (uint32_t)(VCC*10*1024)/adc_res;
+                vx = 1024*(((uint32_t)VCC*10)/adc_res);
 
                 /* converge to target voltage */
                 if(vx < v_tgt) pwm_d++;
