@@ -51,13 +51,6 @@ static void adc_init()
         ADCSRA = _BV(ADEN) | _BV(ADPS2) | _BV(ADPS0);
 }
 
-static void adc_pot_init()
-{
-        /* Read on PB3 and use Vcc as ref */
-        ADCSRA = _BV(ADEN) | _BV(ADPS2) | _BV(ADPS0);
-        ADMUX = _BV(MUX1) | _BV(MUX0);
-}
-
 static void pwm_init()
 {
         /* FAST PWM at CK (on OC0A) */
