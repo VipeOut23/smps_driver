@@ -47,7 +47,8 @@ static uint16_t adc_feedback_read()
 
 static void adc_init()
 {
-
+        /* ADC CK = F_CPU/32 ; Vcc as ref*/
+        ADCSRA = _BV(ADEN) | _BV(ADPS2) | _BV(ADPS0);
 }
 
 static void adc_pot_init()
