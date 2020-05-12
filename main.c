@@ -37,12 +37,30 @@
 
 static uint16_t adc_pot_read()
 {
-        return 0;
+        uint16_t adc_res;
+
+        /* Read on PB3 */
+        ADMUX = _BV(MUX1) | _BV(MUX0);
+        SET(ADCSRA, ADSC);
+        while(0 < GET(ADCSRA, ADSC));
+        adc_res =  ADCL;
+        adc_res |= ADCH<<8;
+
+        return adc_res;
 }
 
 static uint16_t adc_feedback_read()
 {
-        return 0;
+        uint16_t adc_res;
+
+        /* Read on PB5 */
+        ADMUX = 0;
+        SET(ADCSRA, ADSC);
+        while(0 < GET(ADCSRA, ADSC));
+        adc_res =  ADCL;
+        adc_res |= ADCH<<8;
+
+        return adc_res;
 }
 
 static void adc_init()
