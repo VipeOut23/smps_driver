@@ -35,6 +35,21 @@
 #define PWM_CK_DIV_BITS _BV(CS02) | _BV(CS00)
 #endif
 
+static uint8_t adc_pot_read()
+{
+        return 0;
+}
+
+static uint8_t adc_feedback_read()
+{
+        return 0;
+}
+
+static void adc_init()
+{
+
+}
+
 static void adc_pot_init()
 {
         /* Read on PB3 and use Vcc as ref */
