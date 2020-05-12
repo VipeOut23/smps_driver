@@ -22,6 +22,8 @@ CPPFLAGS += $(shell echo | $(CC) -xc -E -v - 2>&1 | grep -E '^\s' | sed '1d;s/^\
 # Extra Flags ##################################################################
 CPPFLAGS += -DUART_TX_BIT=PB4
 
+include def.mk # local definitions
+
 # Rules ########################################################################
 V ?= 0
 ifeq ("$(V)","1")

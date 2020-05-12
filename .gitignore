@@ -1,0 +1,4 @@
+build/
+rom.hex
+def.mk
+compile_commands.json
