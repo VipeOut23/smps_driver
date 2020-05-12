@@ -81,8 +81,10 @@ static void pwm_init()
 
 int main()
 {
-        uint16_t adc_res;
-        uint8_t vx;
+        uint16_t adc_res; // ADC result
+        uint8_t pwm_d;    // Raw pwm duty cycle value
+        uint32_t v_tgt;  // Target Voltage in mV
+        uint16_t vx;      // messured feedback voltage
         size_t str_len;
         char str[24];
 
@@ -92,7 +94,7 @@ int main()
         CLKPR = 0;
         sei();
 
-        adc_pot_init();
+        adc_init();
         pwm_init();
         uart_init();
 
@@ -103,24 +105,28 @@ int main()
         uart_puts("[H",2);
 
         for(;;) {
-                /* Read potentiometer voltage */
-                SET(ADCSRA, ADSC);
-                while(0 < GET(ADCSRA, ADSC));
-                adc_res =  ADCL;
-                adc_res |= ADCH<<8;
+                /* Read potentiometer voltage and map it to an output voltage */
+                adc_res = adc_pot_read();
+                v_tgt = V_OUT_MIN + (((V_OUT_MAX - V_OUT_MIN)*1024)/adc_res);
 
-                /* compensate 1/2 voltage div at potentiometer
-                 * and keep in PWM_D bounds */
-                adc_res = (adc_res>>1);
-                if(adc_res > PWM_D_MAX) adc_res = PWM_D_MAX;
-                if(adc_res < PWM_D_MIN) adc_res = PWM_D_MIN;
+                /* Read feedback voltage */
+                adc_res = adc_feedback_read();
+                vx = (uint32_t)(VCC*10*1024)/adc_res;
 
-                /* Set pwm duty cycle to match it */
-                OCR0B = OCR0A = adc_res;
+                /* converge to target voltage */
+                if(vx < v_tgt) pwm_d++;
+                if(vx > v_tgt) pwm_d--;
+
+                /* Keep pwm value in bounds */
+                if(pwm_d > PWM_D_MAX) pwm_d = PWM_D_MAX;
+                if(pwm_d < PWM_D_MIN) pwm_d = PWM_D_MIN;
+
+                /* Set pwm duty cycle */
+                OCR0B = OCR0A = pwm_d;
 
                 /* Display info */
                 vx = (uint32_t) (100*adc_res)/0xFF;
-                str_len = sprintf(str, "%03d%% @ %ldHz\r\n", vx, F_PWM);
+                str_len = sprintf(str, "F %05dmV ; T %05dmV ; %03d%% @ %dHz\r\n", vx, v_tgt, 0xFF/pwm_d, F_PWM);
                 uart_try_puts(str, str_len);
         }
 }
