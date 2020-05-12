@@ -86,7 +86,7 @@ int main()
         uint32_t v_tgt;  // Target Voltage in mV
         uint16_t vx;      // messured feedback voltage
         size_t str_len;
-        char str[24];
+        char str[64];
 
         /* Set CK div to 1 -> 8MHz CK */
         cli();
