@@ -1,6 +1,6 @@
 # Hardware #####################################################################
 MCU ?= attiny85
-F_CPU ?= 8000000 # 4MHz
+F_CPU ?= 8000000 # 8MHz
 PROGRAMMER ?= stk500v1
 BAUD ?= 19200
 PORT ?= /dev/ttyACM0
