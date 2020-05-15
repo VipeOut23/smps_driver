@@ -17,6 +17,7 @@
 #define PWM_D_MIN (0xFF*0.0)+1  // minimum duty cycle (0-255)
 #define PWM_D_MAX (0xFF*0.7)    // maximum duty cycle (0-255)
 #define F_PWM_TGT 32000         // pwm frequency (not accurate, search for nearest clock divisor)
+#define FEEDBACK_DIVISOR 10     // divisor for feedback voltage
 
 /* Determine PWM clock divisor based on F_PWM_TGT and F_CPU */
 #if F_CPU < F_PWM_TGT*0xFF
@@ -117,9 +118,9 @@ int main()
                 adc_res = adc_pot_read();
                 v_tgt = V_OUT_MIN + (adc_res*(((V_OUT_MAX - V_OUT_MIN))/1024));
 
-                /* Read feedback voltage (scaled down by 10)*/
+                /* Read feedback voltage (downscaled)*/
                 adc_res = adc_feedback_read();
-                vx = adc_res*(((uint32_t)VCC*10)/1024);
+                vx = adc_res*(((uint32_t)VCC*FEEDBACK_DIVISOR)/1024);
 
                 /* converge to target voltage */
                 if(vx < v_tgt) pwm_d++;
