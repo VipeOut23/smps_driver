@@ -2,7 +2,7 @@
 #include <avr/interrupt.h>
 #include <stdio.h>
 
-#ifdef __HAS_SOFTWARE_UART__
+#ifdef __ENABLE_INFO__
 #include "software_uart/uart.h"
 #endif
 
@@ -106,7 +106,7 @@ int main()
         adc_init();
         pwm_init();
 
-#ifdef __HAS_SOFTWARE_UART__
+#ifdef __ENABLE_INFO__
         uart_init();
 
         /* Clear screen */
@@ -138,7 +138,7 @@ int main()
                 /* Set pwm duty cycle */
                 OCR0B = OCR0A = pwm_d;
 
-#ifdef __HAS_SOFTWARE_UART__
+#ifdef __ENABLE_INFO__
                 /* Display info */
                 str_len = sprintf(str, "F %05lumV ; T %05lumV ; %03u%% @ %uHz\r\n", vx, v_tgt, 100*pwm_d/0xFF, F_PWM);
                 uart_try_puts(str, str_len);
