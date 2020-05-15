@@ -21,6 +21,7 @@ CPPFLAGS += $(shell echo | $(CC) -xc -E -v - 2>&1 | grep -E '^\s' | sed '1d;s/^\
 
 # Extra Flags ##################################################################
 CPPFLAGS += -DUART_TX_BIT=PB2
+CPPFLAGS += -DENABLE_INFO
 
 -include def.mk # local definitions
 
