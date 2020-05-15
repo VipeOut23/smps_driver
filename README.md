@@ -28,7 +28,7 @@ Upload rom.hex with
 make flash PORT=/dev/ttyACM0 PROGRAMMER=stk500v1 BAUD=19200
 ```
 
-__These values may need to be adjusted to your specific programmer parameters (as fed in ```avrdude```)__
+_These values may need to be adjusted to your specific programmer parameters (as fed in ```avrdude```)_
 
 
 Additional parameters can be adjusted in the Makefile
