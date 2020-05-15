@@ -15,7 +15,7 @@ Get the sources
 ```sh
 git clone https://github.com/VipeOut23/smps_driver
 cd smps_driver
-git submodule add https://github.com/VipeOut23/software_uart
+git submodule update --init software_uart
 ```
 
 Compile rom.hex with
