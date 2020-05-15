@@ -40,14 +40,14 @@
 #endif
 
 /**
- * Read potentiometer voltage on PB4
+ * Read potentiometer voltage on PB3
  */
 static volatile uint16_t adc_pot_read()
 {
         uint16_t adc_res;
 
-        /* Read on PB4 with Vcc as Ref*/
-        ADMUX = _BV(MUX1);
+        /* Read on PB3 with Vcc as Ref*/
+        ADMUX = _BV(MUX1) | _BV(MUX0);
         SET(ADCSRA, ADSC);
         while(0 < GET(ADCSRA, ADSC));
         adc_res =  ADCL;
@@ -57,14 +57,14 @@ static volatile uint16_t adc_pot_read()
 }
 
 /**
- * Read feedback voltage on PB3
+ * Read feedback voltage on PB4
  */
 static volatile uint16_t adc_feedback_read()
 {
         uint16_t adc_res;
 
-        /* Read on PB3 with Vcc as Ref*/
-        ADMUX = _BV(MUX1) | _BV(MUX0);
+        /* Read on PB4 with Vcc as Ref*/
+        ADMUX = _BV(MUX1);
         SET(ADCSRA, ADSC);
         while(0 < GET(ADCSRA, ADSC));
         adc_res =  ADCL;
