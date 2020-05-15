@@ -1,4 +1,4 @@
-# ATTiny SMPS Driver
+# SMPS Driver for ATTinys
 
 A [switched-mode power supply](https://en.wikipedia.org/wiki/Switched-mode_power_supply) driver for ATTinyx5 MCUs
 
@@ -10,6 +10,13 @@ A [switched-mode power supply](https://en.wikipedia.org/wiki/Switched-mode_power
 - 31kHz PWM (for 8MHz MCUs)
 
 ## Build and Flash
+
+Get the sources
+```sh
+git clone https://github.com/VipeOut23/smps_driver
+cd smps_driver
+git submodule add https://github.com/VipeOut23/software_uart
+```
 
 Compile rom.hex with
 ```sh
@@ -29,4 +36,4 @@ Additional parameters can be adjusted in the Makefile
 
 ## Example Setup
 
-![smps attiny85 symbolic](doc/smps_attiny85_symbolic.png)
+![smps attiny85 symbolic](smps_attiny85_symbolic.png)
