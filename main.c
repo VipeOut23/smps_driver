@@ -11,12 +11,12 @@
 
 
 /* HW params */
-#define VCC 5000         // mV
-#define V_OUT_MAX 40000  // mV
-#define V_OUT_MIN 3000   // mV
-#define PWM_D_MIN (0xFF*0.0)+1
-#define PWM_D_MAX (0xFF*0.7)
-#define F_PWM_TGT 32000 // Not accurate, search for nearest clock divisor
+#define VCC 5000                // supply voltage in mV (for mcu and pot)
+#define V_OUT_MAX 40000         // maximum output voltage in mV
+#define V_OUT_MIN 3000          // minimum output voltage in mV
+#define PWM_D_MIN (0xFF*0.0)+1  // minimum duty cycle (0-255)
+#define PWM_D_MAX (0xFF*0.7)    // maximum duty cycle (0-255)
+#define F_PWM_TGT 32000         // pwm frequency (not accurate, search for nearest clock divisor)
 
 /* Determine PWM clock divisor based on F_PWM_TGT and F_CPU */
 #if F_CPU < F_PWM_TGT*0xFF
@@ -36,6 +36,9 @@
 #define PWM_CK_DIV_BITS _BV(CS02) | _BV(CS00)
 #endif
 
+/**
+ * Read potentiometer voltage on PB3
+ */
 static uint16_t adc_pot_read()
 {
         uint16_t adc_res;
@@ -50,6 +53,9 @@ static uint16_t adc_pot_read()
         return adc_res;
 }
 
+/**
+ * Read feedback voltage on PB4
+ */
 static uint16_t adc_feedback_read()
 {
         uint16_t adc_res;
