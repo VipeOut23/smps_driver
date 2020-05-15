@@ -1,3 +1,3 @@
 [submodule "software_uart"]
 	path = software_uart
-	url = ./software_uart
+	url = https://github.com/VipeOut23/software_uart
