@@ -2,7 +2,9 @@
 #include <avr/interrupt.h>
 #include <stdio.h>
 
+#ifdef __HAS_SOFTWARE_UART__
 #include "software_uart/uart.h"
+#endif
 
 #define SET(reg, pos) (reg |= 1<<(pos))
 #define FLP(reg, pos) (reg ^= 1<<(pos))
@@ -38,14 +40,14 @@
 #endif
 
 /**
- * Read potentiometer voltage on PB3
+ * Read potentiometer voltage on PB4
  */
-static uint16_t adc_pot_read()
+static volatile uint16_t adc_pot_read()
 {
         uint16_t adc_res;
 
-        /* Read on PB3 */
-        ADMUX = _BV(MUX1) | _BV(MUX0);
+        /* Read on PB4 with Vcc as Ref*/
+        ADMUX = _BV(MUX1);
         SET(ADCSRA, ADSC);
         while(0 < GET(ADCSRA, ADSC));
         adc_res =  ADCL;
@@ -55,14 +57,14 @@ static uint16_t adc_pot_read()
 }
 
 /**
- * Read feedback voltage on PB4
+ * Read feedback voltage on PB3
  */
-static uint16_t adc_feedback_read()
+static volatile uint16_t adc_feedback_read()
 {
         uint16_t adc_res;
 
-        /* Read on PB4 */
-        ADMUX = _BV(MUX1);
+        /* Read on PB3 with Vcc as Ref*/
+        ADMUX = _BV(MUX1) | _BV(MUX0);
         SET(ADCSRA, ADSC);
         while(0 < GET(ADCSRA, ADSC));
         adc_res =  ADCL;
@@ -73,7 +75,7 @@ static uint16_t adc_feedback_read()
 
 static void adc_init()
 {
-        /* ADC CK = F_CPU/32 ; Vcc as ref*/
+        /* ADC CK = F_CPU/32 */
         ADCSRA = _BV(ADEN) | _BV(ADPS2) | _BV(ADPS0);
 }
 
@@ -103,6 +105,8 @@ int main()
 
         adc_init();
         pwm_init();
+
+#ifdef __HAS_SOFTWARE_UART__
         uart_init();
 
         /* Clear screen */
@@ -110,6 +114,7 @@ int main()
         uart_puts("[2J",3);
         uart_putc(27);
         uart_puts("[H",2);
+#endif
 
         pwm_d = PWM_D_MIN;
 
@@ -133,8 +138,10 @@ int main()
                 /* Set pwm duty cycle */
                 OCR0B = OCR0A = pwm_d;
 
+#ifdef __HAS_SOFTWARE_UART__
                 /* Display info */
                 str_len = sprintf(str, "F %05lumV ; T %05lumV ; %03u%% @ %uHz\r\n", vx, v_tgt, 100*pwm_d/0xFF, F_PWM);
                 uart_try_puts(str, str_len);
+#endif
         }
 }
