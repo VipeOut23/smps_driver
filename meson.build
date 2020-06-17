@@ -28,22 +28,24 @@ avrdude = find_program( 'avrdude' )
 
 # Optionals ####################################################################
 
-
 if get_option('uart').enabled()
-  run_command('git', '-C', meson.source_root(), 'submodule', 'update', '--init', '--recursive')
-  software_uart = declare_dependency(
+  message('Building with uart info')
+
+  software_uart_dep = declare_dependency(
     link_with: static_library('software_uart',
-                              files(['src/software_uart/uart.c']),
+                              sources: files(['src/software_uart/uart.c']),
                               dependencies: [avr_device_dep, avr_libc_dep, avr_libm_dep],
                               include_directories: avr_incdir,
                               c_args: c_args,
                               link_args: link_args,
                               pic: false),
     include_directories: include_directories('src/software_uart'))
+
   c_args += '-D__ENABLE_INFO__'
   c_args += '-DUART_TX_PIN='+get_option('uart_tx_pin')
 else
-  software_uart = dependency('', required: false)
+  message('Building without uart info')
+  software_uart_dep = dependency('', required: false)
 endif
 
 # Targets ######################################################################
@@ -55,7 +57,7 @@ elf = executable( 'rom.elf',
                   dependencies: [avr_device_dep,
                                  avr_libc_dep,
                                  avr_libm_dep,
-                                 software_uart] )
+                                 software_uart_dep])
 
 hex = custom_target( 'rom.hex',
                      output: 'rom.hex',
