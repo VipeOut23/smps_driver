@@ -42,7 +42,7 @@
 /**
  * Read potentiometer voltage on PB3
  */
-static volatile uint16_t adc_pot_read()
+static uint16_t adc_pot_read()
 {
         uint16_t adc_res;
 
@@ -59,7 +59,7 @@ static volatile uint16_t adc_pot_read()
 /**
  * Read feedback voltage on PB4
  */
-static volatile uint16_t adc_feedback_read()
+static uint16_t adc_feedback_read()
 {
         uint16_t adc_res;
 
@@ -94,8 +94,11 @@ int main()
         uint8_t pwm_d;     // Raw pwm duty cycle value
         uint32_t v_tgt;    // Target Voltage in mV
         uint32_t vx;       // messured feedback voltage
+
+#ifdef __ENABLE_INFO__
         size_t str_len;
         char str[64];
+#endif
 
         /* Set CK div to 1 -> 8MHz CK */
         cli();
@@ -140,7 +143,7 @@ int main()
 
 #ifdef __ENABLE_INFO__
                 /* Display info */
-                str_len = sprintf(str, "F %05lumV ; T %05lumV ; %03u%% @ %uHz\r\n", vx, v_tgt, 100*pwm_d/0xFF, F_PWM);
+                str_len = sprintf(str, "F %05lumV ; T %05lumV ; %03u%% @ %ldHz\r\n", vx, v_tgt, 100*pwm_d/0xFF, F_PWM);
                 uart_try_puts(str, str_len);
 #endif
         }
