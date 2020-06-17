@@ -143,7 +143,7 @@ int main()
 
 #ifdef __ENABLE_INFO__
                 /* Display info */
-                str_len = sprintf(str, "F %05lumV ; T %05lumV ; %03u%% @ %ldHz\r\n", vx, v_tgt, 100*pwm_d/0xFF, F_PWM);
+                str_len = sprintf(str, "F %05umV ; T %05umV ; %03u%% @ %dHz\r\n", vx, v_tgt, 100*pwm_d/0xFF, F_PWM);
                 uart_try_puts(str, str_len);
 #endif
         }
