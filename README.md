@@ -31,6 +31,7 @@ meson setup build --cross-file=attinyXX.conf \
     -Dflash_programmer=stk500v1 \
     -Dflash_baud=19200
 ```
+_You can list the available options with_```meson configure```
 
 Optionally reconfigure with
 
