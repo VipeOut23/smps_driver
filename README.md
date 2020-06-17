@@ -13,10 +13,8 @@ A [switched-mode power supply](https://en.wikipedia.org/wiki/Switched-mode_power
 
 Get the sources
 ```sh
-git clone https://github.com/VipeOut23/smps_driver
+git clone --recursive https://github.com/VipeOut23/smps_driver
 cd smps_driver
-# if you want to use uart info also run
-git submodule update --init src/software_uart
 ```
 
 **NOTE: You might want to create your own device file based on** ```attiny85.conf```
