@@ -15,23 +15,39 @@ Get the sources
 ```sh
 git clone https://github.com/VipeOut23/smps_driver
 cd smps_driver
-git submodule update --init software_uart
+# if you want to use uart info also run
+git submodule update --init src/software_uart
+```
+
+**NOTE: You might want to create your own device file based on** ```attiny85.conf```
+
+Configuring the build
+
+``` sh
+meson setup build --cross-file=attinyXX.conf \
+    -Duart=enabled \
+    -Duart_tx_pin=PB1 \
+    -Dflash_port=/dev/ttyACM0 \
+    -Dflash_programmer=stk500v1 \
+    -Dflash_baud=19200
+```
+
+Optionally reconfigure with
+
+``` sh
+meson configure build ...
 ```
 
 Compile rom.hex with
 ```sh
-make
+cd build
+ninja rom.hex
 ```
 
 Upload rom.hex with
 ```sh
-make flash PORT=/dev/ttyACM0 PROGRAMMER=stk500v1 BAUD=19200
+ninja flash
 ```
-
-_These values may need to be adjusted to your specific programmer parameters (as fed in ```avrdude```)_
-
-
-Additional parameters can be adjusted in the Makefile
 
 
 ## Example Setup
