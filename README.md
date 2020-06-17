@@ -26,7 +26,7 @@ Configuring the build
 ``` sh
 meson setup build --cross-file=attinyXX.conf \
     -Duart=enabled \
-    -Duart_tx_pin=PB1 \
+    -Duart_tx_pin=PB2 \
     -Dflash_port=/dev/ttyACM0 \
     -Dflash_programmer=stk500v1 \
     -Dflash_baud=19200

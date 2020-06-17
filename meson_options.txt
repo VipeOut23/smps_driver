@@ -1,5 +1,5 @@
 option('uart', type: 'feature', value: 'enabled', description: 'Enable uart output')
-option('uart_tx_pin', type: 'string', value: 'PB1', description: 'uart tx pin')
+option('uart_tx_pin', type: 'string', value: 'PB2', description: 'uart tx pin')
 option('flash_programmer', type: 'string', value: 'stk500v1', description: 'Programmer Identifier (avrdude)')
 option('flash_baud', type: 'integer', value: '19200', description: 'Baud rate for flashing')
 option('flash_port', type: 'string', value: '/dev/ttyACM0', description: 'Programmer device path')
