@@ -31,6 +31,9 @@ avrdude = find_program( 'avrdude' )
 if get_option('uart').enabled()
   message('Building with uart info')
 
+  c_args += '-D__ENABLE_INFO__'
+  c_args += '-DUART_TX_PIN='+get_option('uart_tx_pin')
+
   software_uart_dep = declare_dependency(
     link_with: static_library('software_uart',
                               sources: files(['src/software_uart/uart.c']),
@@ -40,9 +43,6 @@ if get_option('uart').enabled()
                               link_args: link_args,
                               pic: false),
     include_directories: include_directories('src/software_uart'))
-
-  c_args += '-D__ENABLE_INFO__'
-  c_args += '-DUART_TX_PIN='+get_option('uart_tx_pin')
 else
   message('Building without uart info')
   software_uart_dep = dependency('', required: false)
