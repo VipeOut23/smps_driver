@@ -2,7 +2,7 @@ project( 'smps_driver', 'c',
          version : '1.0',
          default_options : ['warning_level=3',
                             'optimization=s',
-                            'c_std=gnu17',
+                            'c_std=c17',
                             'debug=false'] )
 
 # Build ########################################################################
