@@ -32,7 +32,7 @@ if get_option('uart').enabled()
   message('Building with uart info')
 
   c_args += '-D__ENABLE_INFO__'
-  c_args += '-DUART_TX_PIN='+get_option('uart_tx_pin')
+  c_args += '-DUART_TX_BIT='+get_option('uart_tx_pin')
 
   software_uart_dep = declare_dependency(
     link_with: static_library('software_uart',
