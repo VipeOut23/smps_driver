@@ -69,5 +69,5 @@ run_target( 'flash',
                       '-c', get_option('flash_programmer'),
                       '-P', get_option('flash_port'),
                       '-b', get_option('flash_baud').to_string(),
-                      '-U', 'flash:w:'+meson.build_root()+'/rom.hex'],
+                      '-U', 'flash:w:rom.hex'],
             depends: [hex] )
