@@ -10,17 +10,11 @@ src = files([
              'src/smps_driver.c'
            ])
 
-c_args = [
-  '-mmcu=' + host_machine.cpu(),
-  '-DF_CPU=' + meson.get_cross_property('f_cpu').to_string()
-]
+c_args = []
 link_args = []
 
 # Dependencies #################################################################
 avr_incdir = include_directories('/usr/avr/include')
-avr_device_dep = meson.get_compiler('c').find_library(meson.get_cross_property('cpu_class')+'/lib'+host_machine.cpu())
-avr_libc_dep = meson.get_compiler('c').find_library(meson.get_cross_property('cpu_class')+'/libc')
-avr_libm_dep = meson.get_compiler('c').find_library(meson.get_cross_property('cpu_class')+'/libm')
 
 # Programs #####################################################################
 objcopy = find_program( 'avr-objcopy' )
@@ -32,15 +26,14 @@ if get_option('uart').enabled()
   message('Building with uart info')
 
   c_args += '-D__ENABLE_INFO__'
-  c_args += '-DUART_TX_BIT='+get_option('uart_tx_pin')
+  c_args += '-DUART_TX_PIN='+get_option('uart_tx_pin')
 
   software_uart_dep = declare_dependency(
     link_with: static_library('software_uart',
-                              sources: files(['src/software_uart/uart.c']),
-                              dependencies: [avr_device_dep, avr_libc_dep, avr_libm_dep],
                               include_directories: avr_incdir,
                               c_args: c_args,
                               link_args: link_args,
+                              sources: files(['src/software_uart/uart.c']),
                               pic: false),
     include_directories: include_directories('src/software_uart'))
 else
@@ -50,14 +43,11 @@ endif
 
 # Targets ######################################################################
 elf = executable( 'rom.elf',
+                  include_directories: avr_incdir,
                   sources : src,
                   c_args: c_args,
                   link_args: link_args,
-                  include_directories: avr_incdir,
-                  dependencies: [avr_device_dep,
-                                 avr_libc_dep,
-                                 avr_libm_dep,
-                                 software_uart_dep])
+                  dependencies: [software_uart_dep])
 
 hex = custom_target( 'rom.hex',
                      output: 'rom.hex',
